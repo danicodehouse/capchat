@@ -41,9 +41,14 @@
       color: #ECF0F1;
       background-color: {{ color }}; /* Dynamically set color */
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       margin-bottom: 20px;
       animation: fadeIn 1s ease-in-out;
+      transition: transform 0.3s; /* Add transition for hover effect */
+    }
+
+    #captcha-container:hover {
+      transform: scale(1.05); /* Slightly enlarge on hover */
     }
 
     #captcha-form {
@@ -63,6 +68,11 @@
       transition: border-color 0.3s;
     }
 
+    #captcha-input:focus {
+      border-color: #E74C3C; /* Change border color on focus */
+      outline: none; /* Remove default outline */
+    }
+
     #captcha-submit {
       width: 100%;
       padding: 12px;
@@ -73,11 +83,12 @@
       background-color: #E74C3C; 
       color: #ECF0F1;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.3s; /* Add transform transition */
     }
 
     #captcha-submit:hover {
       background-color: #C0392B; 
+      transform: scale(1.05); /* Enlarge on hover */
     }
 
     #captcha-message {
