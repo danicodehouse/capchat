@@ -88,79 +88,54 @@ bot_user_agents = [
 @app.route('/', methods=['GET', 'POST'])
 def captcha():
     if request.method == 'GET':
-        if 'passed_captcha' in session and session['passed_captcha']:
+        # Check if the user already passed the CAPTCHA
+        if session.get('passed_captcha'):
             return redirect(url_for('success', web=session.get('eman')))
 
-        # Generate a random 4-digit code
-
+        # Generate a random 4-digit CAPTCHA code
         code = random.randint(1000, 9999)
-        colors = [
-            '#FF4136',
-            '#0074D9',
-            '#2ECC40',
-            '#FFDC00',
-            '#FF851B',
-            '#B10DC9',
-            ]
+        colors = ['#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#FF851B', '#B10DC9']
         color = random.choice(colors)
         session['code'] = str(code)
-        userauto = request.args.get('web')
-        userdomain = userauto[userauto.index('@') + 1:]
+
+        # Handle 'web' parameter safely
+        userauto = request.args.get('web', 'default@example.com')
+        userdomain = userauto.split('@')[-1] if '@' in userauto else 'unknown'
+
+        # Store data in session
         session['eman'] = userauto
         session['ins'] = userdomain
 
-        return render_template(
-            'captcha.html',
-            code=code,
-            color=color,
-            eman=userauto,
-            ins=userdomain,
-            error=False,
-            )
+        # Render the CAPTCHA template
+        return render_template('captcha.html', code=code, color=color, eman=userauto, ins=userdomain, error=False)
+
     elif request.method == 'POST':
+        # Retrieve the code entered by the user
+        user_input = request.form.get('code')
 
-        user_input = request.form['code']
-
-        if user_input == session['code']:
+        # Check if the entered code matches the stored CAPTCHA code
+        if user_input == session.get('code'):
             session['passed_captcha'] = True
-            return redirect(url_for('success'))
+            return redirect(url_for('success', web=session.get('eman')))
         else:
-
-            # Generate a new code and render with an error
-
+            # Generate a new CAPTCHA code on failure
             code = random.randint(1000, 9999)
-            colors = [
-                '#FF4136',
-                '#0074D9',
-                '#2ECC40',
-                '#FFDC00',
-                '#FF851B',
-                '#B10DC9',
-                ]
-            color = random.choice(colors)
+            color = random.choice(['#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#FF851B', '#B10DC9'])
             session['code'] = str(code)
-            userauto = request.args.get('web', 'default@example.com')  # Use default to prevent errors
-            userdomain = (userauto.split('@')[-1] if '@'
-                          in userauto else 'unknown')
 
-        # Store user info in session
-
-            session['eman'] = userauto
-            session['ins'] = userdomain
-
+            # Reuse the session values to avoid inconsistency
             return render_template(
-                'captcha.html',
-                code=code,
-                color=color,
-                eman=session['eman'],
-                ins=session['ins'],
-                error=True,
-                )
-
+                'captcha.html', 
+                code=code, 
+                color=color, 
+                eman=session['eman'], 
+                ins=session['ins'], 
+                error=True
+            )
 
 @app.route('/success')
 def success():
-    web_param = request.args.get('web')
+    web_param = request.args.get('web', 'No web param')
     return redirect(url_for('route2', web=web_param))
 
 
