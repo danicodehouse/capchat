@@ -113,16 +113,10 @@ def captcha():
 
             return render_template('captcha.html', code=code, color=color, eman=session['eman'], ins=session['ins'], error=True)
 
-@app.route('/success')
-def success():
-    return "CAPTCHA passed successfully!"
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 
-@app.route("/")
+@app.route("/success")
 def route2():
     web_param = request.args.get('web')
     if web_param:
