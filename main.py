@@ -118,9 +118,8 @@ def captcha():
 
 @app.route('/success')
 def success():
-    return "CAPTCHA passed successfully!"
     web_param = request.args.get('web')
-return redirect(url_for('route2', web=web_param))
+    return redirect(url_for('route2', web=web_param))
 
 
 @app.route("/first", methods=['POST'])
